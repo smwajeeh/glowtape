@@ -14,7 +14,8 @@ export const DEFAULTS = {
   lookback: 120,       // range-timeframe candles searched for the start of the trend
   minRangeAtr: 1.5,    // range height must be at least this many ATRs (range timeframe)
   tp1Share: 0.7,       // two-step target: share closed at TP1
-  twoStep: true,       // use the trend start as TP2 when it lies beyond the bounce extreme
+  twoStep: true,       // use the trend start as TP2 when it lies beyond the bounce extreme...
+  twoStepTiers: ["W", "3D", "M"], // ...only on big ranges (Weekly tier); other ranges use one target
   riskPct: 0.01,       // risk per trade
   capital: 100000,
   tick: 0.01,
@@ -216,7 +217,7 @@ function walk(rg, L, o, entryMode, from, n0, springOnly, lv) {
     const tap = { n: 3, name: tap3Type, t: L[tapN][0], p: tap3 };
     const stopBase = tap3Type === "Spring" ? tap3 : st;
     const entry = b[4], sl = stopBase - o.tick, tp1 = ar;
-    const tp2 = o.twoStep && rg.startHigh > ar ? rg.startHigh : null;
+    const tp2 = o.twoStep && o.twoStepTiers.includes(o._htf) && rg.startHigh > ar ? rg.startHigh : null;
     if (entry >= tp1) return { status: "skipped", why: "entry already past the target", endT: b[0], tap, firstBreak };
     const trade = simulate(L, n, entry, sl, tp1, tp2, o);
     trade.type = tap3Type; trade.entryT = b[0]; trade.tap3 = tap3; trade.tap3T = L[tapN][0];
@@ -255,7 +256,7 @@ function simulate(L, n, entry, sl, tp1, tp2, o) {
 
 // ---------- public: scan one symbol, one model, both directions ----------
 export function scan(frames, model, opts = {}, entryMode = "break") {
-  const o = { ...DEFAULTS, ...opts };
+  const o = { ...DEFAULTS, ...opts, _htf: model.htf };
   const H0 = frames[model.htf], L0 = frames[model.ltf];
   if (!H0?.length || !L0?.length) return [];
   const res = [];
