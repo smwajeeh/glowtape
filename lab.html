@@ -141,6 +141,7 @@ const S = { sym: "QQQ", model: "4H-15m", mode: "break", show: "trades", view: "h
 const cache = {};
 $("sym").innerHTML = SYMS.map(s => `<option>${s}</option>`).join("");
 $("model").innerHTML = MODELS.map(m => `<option value="${m.id}">${m.label}</option>`).join("");
+$("sym").value = S.sym; $("model").value = S.model;
 $("cases").innerHTML = CASES.map((c, i) => `<button class="chip" data-i="${i}">${c.label}</button>`).join("");
 
 const fmtP = p => p == null ? "–" : "$" + (+p).toFixed(2);
