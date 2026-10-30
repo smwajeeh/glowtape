@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wyckoff Lab · Glowtape</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700&display=swap">
+<style>
+:root{
+  --bg:#EEF2F8; --panel:#FFFFFF; --field:#F3F6FB; --line:#E1E7F1; --ink:#0E1526; --muted:#56627B;
+  --accent:#2459E8; --accent-fill:#2459E8; --up:#047857; --down:#C81E3A; --flat:#66728A; --warn:#B45309;
+  --shadow:0 14px 36px rgba(30,50,90,.08);
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --brand:"Unbounded","Plus Jakarta Sans",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-gt="light"]){--bg:#070A14;--panel:#101626;--field:#0B1120;--line:#1E2740;--ink:#EEF2FA;--muted:#9AA6BF;--accent:#6A90FF;--accent-fill:#2F5FE0;--up:#34D399;--down:#F2546B;--flat:#7F8BA5;--warn:#F59E0B;--shadow:0 20px 50px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-gt="dark"]{--bg:#070A14;--panel:#101626;--field:#0B1120;--line:#1E2740;--ink:#EEF2FA;--muted:#9AA6BF;--accent:#6A90FF;--accent-fill:#2F5FE0;--up:#34D399;--down:#F2546B;--flat:#7F8BA5;--warn:#F59E0B;--shadow:0 20px 50px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.up{color:var(--up)}.down{color:var(--down)}.muted{color:var(--muted)}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:12px max(16px,env(safe-area-inset-left));background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.logo{display:inline-flex;align-items:baseline;font-family:var(--brand);font-weight:700;font-size:22px;color:var(--ink);text-decoration:none;line-height:1}
+.orb-o{display:inline-block;width:.74em;height:.74em;margin:0 .04em 0 .05em;border-radius:50%;align-self:center;transform:translateY(.06em);background:radial-gradient(circle at 33% 26%,rgba(255,255,255,.9) 0,rgba(255,255,255,0) 34%),radial-gradient(circle at 50% 60%,#9cf9d4 0%,#22c58d 50%,#0b5a43 100%);box-shadow:0 0 12px rgba(52,211,153,.6)}
+header h1{margin:0;font-size:16px;font-weight:800}
+header .tag{font-size:11px;font-weight:800;color:var(--warn);border:1px solid currentColor;border-radius:999px;padding:1px 8px}
+.grow{flex:1}
+.back{color:var(--accent);font-weight:700;text-decoration:none;font-size:13px}
+.wrap{display:flex;flex-wrap:wrap;gap:16px;padding:16px max(16px,env(safe-area-inset-left));max-width:1700px;margin:0 auto;align-items:flex-start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.side{flex:1 1 300px;max-width:380px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.main{flex:999 1 600px;min-width:0;display:flex;flex-direction:column;gap:14px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
+select{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--field);padding:0 10px;font-weight:600;color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1 1 120px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;min-height:34px;padding:0 12px;font-weight:700;font-size:12.5px}
+.chip:hover{border-color:var(--accent)}
+.list{display:flex;flex-direction:column;gap:4px;max-height:min(62vh,640px);overflow:auto;margin:0 -6px;padding:0 6px}
+.item{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 10px;border-radius:12px;border:1px solid transparent}
+.item:hover{background:var(--field)}
+.item[aria-current="true"]{border-color:var(--accent);background:var(--field)}
+.item:focus-visible{outline:2px solid var(--accent)}
+.item b{font-weight:800;font-size:13px}
+.item .r{font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.item .s{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.empty{color:var(--muted);font-size:13px;padding:8px 4px}
+.chartcard{padding:12px;display:flex;flex-direction:column;gap:10px}
+.charthead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.charthead h2{margin:0;font-size:16px;font-weight:800}
+.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--field);border:1px solid var(--line)}
+.seg button{border:0;background:transparent;border-radius:9px;min-height:34px;padding:0 12px;font-weight:700;font-size:12.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent-fill);color:#fff}
+#chart{height:min(64vh,620px);min-height:380px;border-radius:12px;overflow:hidden}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.info{padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.info h3{margin:0 0 6px;font-size:13px;font-weight:800}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px;font-variant-numeric:tabular-nums;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:700;text-align:right}
+.stats{padding:16px}
+.stats h3{margin:0 0 8px;font-size:14px;font-weight:800}
+.stats table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.stats th,.stats td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.stats th:first-child,.stats td:first-child{text-align:left}
+.stats th{color:var(--muted);font-size:12px}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.loading{padding:40px;text-align:center;color:var(--muted)}
+.tw{overflow:auto}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="./" aria-label="Glowtape home"><span aria-hidden="true">gl</span><span class="orb-o" aria-hidden="true"></span><span aria-hidden="true">wtape</span></a>
+  <h1>Wyckoff Lab</h1><span class="tag">REVIEW · DEMO ONLY</span>
+  <span class="grow"></span>
+  <a class="back" href="./">← Back to markets</a>
+</header>
+
+<div class="wrap">
+  <aside class="card side" aria-label="Setups">
+    <div class="row">
+      <label class="f">Stock<select id="sym"></select></label>
+      <label class="f">Timeframes<select id="model"></select></label>
+    </div>
+    <div class="row">
+      <label class="f">Entry<select id="mode"><option value="break">Break entry (main)</option><option value="pullback">Pullback entry (compare)</option></select></label>
+      <label class="f">Show<select id="show"><option value="trades">Trades</option><option value="live">Live setups (waiting)</option><option value="all">All ranges</option></select></label>
+    </div>
+    <div>
+      <div class="f" style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">Your test cases</div>
+      <div class="chips" id="cases"></div>
+    </div>
+    <div class="list" id="list" role="listbox" aria-label="Setups found"><div class="loading">Loading price history…</div></div>
+  </aside>
+
+  <section class="main">
+    <div class="card chartcard">
+      <div class="charthead">
+        <h2 id="title">Pick a setup</h2>
+        <div class="seg" role="group" aria-label="Chart timeframe"><button id="vHtf" aria-pressed="true">Range timeframe</button><button id="vLtf" aria-pressed="false">Entry timeframe</button></div>
+      </div>
+      <div id="chart"></div>
+      <div class="legend">
+        <span><i style="border-color:#22c58d"></i>Range high / low</span>
+        <span><i style="border-color:#8b9bb8;border-top-style:dashed"></i>50% midline</span>
+        <span><i style="border-color:#f59e0b;border-top-style:dotted"></i>35% limit</span>
+        <span><i style="border-color:#4c7dff"></i>Entry</span>
+        <span><i style="border-color:#f2546b"></i>Stop</span>
+        <span><i style="border-color:#34d399"></i>Targets</span>
+      </div>
+    </div>
+    <div class="card info" id="info" hidden></div>
+    <div class="card stats" id="stats" hidden></div>
+  </section>
+</div>
+
+<script src="vendor/lightweight-charts.standalone.production.js"></script>
+<script type="module">
+import { buildFrames, scan, MODELS, ny } from "./engine/wyckoff.js?v=1";
+
+const HIST = "https://raw.githubusercontent.com/smwajeeh/glowtape/history/";
+const SYMS = ["QQQ", "GOOG", "ADBE"];
+const CASES = [
+  { label: "#1 NQ → QQQ accumulation", sym: "QQQ", model: "4H-15m", t: "2026-08-24", dir: "long" },
+  { label: "#2 GOOG distribution (outer)", sym: "GOOG", model: "4H-15m", t: "2026-10-01", dir: "short", bounce: 332.65 },
+  { label: "#2 GOOG distribution (inner)", sym: "GOOG", model: "4H-15m", t: "2026-10-08", dir: "short", bounce: 343.51 },
+  { label: "#3 ADBE accumulation", sym: "ADBE", model: "3D-4H", t: "2022-09-27", dir: "long", bounce: 638.25 },
+];
+const $ = id => document.getElementById(id);
+try { const s = JSON.parse(localStorage.getItem("glowtape") || "{}"); if (s.theme) document.documentElement.setAttribute("data-gt", s.theme); } catch (e) {}
+const dark = () => getComputedStyle(document.documentElement).getPropertyValue("--bg").trim().toLowerCase() === "#070a14";
+
+const S = { sym: "QQQ", model: "4H-15m", mode: "break", show: "trades", view: "htf", sel: null, frames: null, setups: [] };
+const cache = {};
+$("sym").innerHTML = SYMS.map(s => `<option>${s}</option>`).join("");
+$("model").innerHTML = MODELS.map(m => `<option value="${m.id}">${m.label}</option>`).join("");
+$("cases").innerHTML = CASES.map((c, i) => `<button class="chip" data-i="${i}">${c.label}</button>`).join("");
+
+const fmtP = p => p == null ? "–" : "$" + (+p).toFixed(2);
+const fmtD = t => { if (!t) return "–"; const n = ny(t); const hh = Math.floor(n.mins / 60), mm = n.mins % 60; return n.date + (n.mins ? ` ${hh}:${String(mm).padStart(2, "0")}` : ""); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// show New York clock time on the chart axis
+const local = t => { const n = ny(t); const [y, m, d] = n.date.split("-").map(Number); return Date.UTC(y, m - 1, d, 0, n.mins) / 1000; };
+
+async function load(sym) {
+  if (cache[sym]) return cache[sym];
+  $("list").innerHTML = `<div class="loading">Loading ${sym} history…</div>`;
+  const r = await fetch(HIST + sym + ".json", { cache: "no-store" });
+  if (!r.ok) throw new Error("history " + r.status);
+  const j = await r.json();
+  cache[sym] = buildFrames(j.bars);
+  return cache[sym];
+}
+
+async function run() {
+  try { S.frames = await load(S.sym); } catch (e) { $("list").innerHTML = `<div class="empty">Couldn't load ${S.sym} history. Try again in a minute.</div>`; return; }
+  const model = MODELS.find(m => m.id === S.model);
+  S.setups = scan(S.frames, model, {}, S.mode).sort((a, b) => (b.trade?.entryT || b.t.valid) - (a.trade?.entryT || a.t.valid));
+  renderStats();
+  renderList();
+}
+
+function visible() {
+  if (S.show === "trades") return S.setups.filter(e => e.trades?.length);
+  if (S.show === "live") return S.setups.filter(e => ["watching", "tap3-waiting-break", "st-forming", "in-trade", "armed-no-ltf"].includes(e.status));
+  return S.setups;
+}
+const STATUS = { closed: "Closed", "in-trade": "In trade", watching: "Waiting for tap 3", "tap3-waiting-break": "Tap 3 in, waiting for break", "st-forming": "ST forming", "waiting-st": "Waiting for ST", dead: "Range broken", skipped: "Skipped", "armed-no-ltf": "Waiting (no entry data yet)", "no-entry-data": "No entry-timeframe data" };
+
+function renderList() {
+  const v = visible().slice(0, 400);
+  if (!v.length) { $("list").innerHTML = `<div class="empty">Nothing found for this stock and timeframe pair.</div>`; drawEmpty(); return; }
+  $("list").innerHTML = v.map((e, i) => {
+    const R = e.trades?.length ? e.trades.reduce((a, t) => a + t.r, 0) : null;
+    const when = e.trade ? fmtD(e.trade.entryT) : fmtD(e.t.tap1);
+    const kind = e.dir === "long" ? "Accumulation" : "Distribution";
+    return `<button class="item" role="option" data-id="${esc(e.id)}" aria-current="${S.sel === e.id}">
+      <b>${kind} · ${e.trades?.map(t => t.type).join(" + ") || STATUS[e.status] || e.status}</b>
+      <span class="r ${R == null ? "muted" : R > 0 ? "up" : R < 0 ? "down" : ""}">${R == null ? "" : (R > 0 ? "+" : "") + R.toFixed(2) + "R"}</span>
+      <span class="s">${when} · range ${fmtP(Math.min(e.levels.tap1, e.levels.bounce))}–${fmtP(Math.max(e.levels.tap1, e.levels.bounce))} · ${STATUS[e.status] || e.status}</span>
+    </button>`;
+  }).join("");
+  if (!S.sel || !v.some(e => e.id === S.sel)) select(v[0].id); else draw();
+}
+$("list").addEventListener("click", ev => { const b = ev.target.closest(".item"); if (b) select(b.dataset.id); });
+function select(id) { S.sel = id; document.querySelectorAll(".item").forEach(b => b.setAttribute("aria-current", b.dataset.id === id)); draw(); renderInfo(); }
+
+// ---------- chart ----------
+let chart = null;
+function mkChart() {
+  if (chart) chart.remove();
+  const d = dark();
+  chart = LightweightCharts.createChart($("chart"), {
+    autoSize: true,
+    layout: { background: { color: d ? "#0B1120" : "#FFFFFF" }, textColor: d ? "#9AA6BF" : "#56627B", fontFamily: "Plus Jakarta Sans, system-ui, sans-serif" },
+    grid: { vertLines: { color: d ? "#151D33" : "#EEF2F8" }, horzLines: { color: d ? "#151D33" : "#EEF2F8" } },
+    rightPriceScale: { borderColor: d ? "#1E2740" : "#E1E7F1" }, timeScale: { borderColor: d ? "#1E2740" : "#E1E7F1", timeVisible: true },
+    crosshair: { mode: 0 },
+  });
+  return chart;
+}
+function drawEmpty() { mkChart(); $("title").textContent = "Nothing to show"; $("info").hidden = true; }
+
+function draw() {
+  const e = S.setups.find(x => x.id === S.sel); if (!e) return;
+  const model = MODELS.find(m => m.id === S.model);
+  const tf = S.view === "htf" ? model.htf : model.ltf;
+  const bars = S.frames[tf];
+  const c = mkChart();
+  const candles = c.addCandlestickSeries({ upColor: "#22c58d", downColor: "#ef4f6a", borderVisible: false, wickUpColor: "#22c58d", wickDownColor: "#ef4f6a", priceLineVisible: false, lastValueVisible: false });
+  // window: from a bit before the trend start to a bit after the exit / now
+  const t0 = S.view === "htf" ? e.t.trendStart : (e.trade ? Math.min(e.trade.tap3T ?? e.trade.entryT, e.trade.entryT) : e.t.valid);
+  const tEnd = e.trade?.exitT || e.endT || bars[bars.length - 1][0];
+  let i0 = bars.findIndex(b => b[0] >= t0); if (i0 < 0) i0 = 0;
+  let i1 = bars.findIndex(b => b[0] > tEnd); if (i1 < 0) i1 = bars.length - 1;
+  const pad = S.view === "htf" ? 12 : 60;
+  const a = Math.max(0, i0 - pad), z = Math.min(bars.length - 1, i1 + pad);
+  const data = bars.slice(a, z + 1).map(b => ({ time: local(b[0]), open: b[1], high: b[2], low: b[3], close: b[4] }));
+  candles.setData(data);
+  const T = t => { // snap to a bar time on this chart
+    let best = data[0].time; const x = local(t);
+    for (const d of data) { if (d.time <= x) best = d.time; else break; }
+    return best;
+  };
+  const seg = (from, to, price, color, style = 0, width = 2) => {
+    if (price == null) return;
+    const s = c.addLineSeries({ color, lineWidth: width, lineStyle: style, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false });
+    const x0 = T(from), x1 = T(to); s.setData(x0 === x1 ? [{ time: x0, value: price }] : [{ time: x0, value: price }, { time: x1, value: price }]);
+  };
+  const L = e.levels, rangeFrom = e.t.tap1, rangeTo = tEnd;
+  seg(rangeFrom, rangeTo, L.tap1, "#22c58d");
+  seg(e.t.bounce, rangeTo, L.bounce, "#22c58d");
+  seg(e.t.valid, rangeTo, L.mid, "#8b9bb8", 2, 1);
+  seg(e.t.valid, rangeTo, L.limit, "#f59e0b", 1, 1);
+  if (L.trendStart != null && e.trade?.tp2 != null) seg(e.t.trendStart, rangeTo, L.trendStart, "#34d399", 2, 1);
+  const marks = [];
+  const up = e.dir === "long";
+  marks.push({ time: T(e.t.tap1), position: up ? "belowBar" : "aboveBar", color: "#22c58d", shape: up ? "arrowUp" : "arrowDown", text: up ? "SC" : "BC" });
+  marks.push({ time: T(e.t.bounce), position: up ? "aboveBar" : "belowBar", color: "#8b9bb8", shape: "circle", text: up ? "Bounce" : "Drop" });
+  for (const tp of e.taps) marks.push({ time: T(tp.t), position: up ? "belowBar" : "aboveBar", color: tp.n === 3 ? "#a78bfa" : "#22c58d", shape: up ? "arrowUp" : "arrowDown", text: tp.pending ? tp.name + " (forming)" : tp.name });
+  for (const tr of e.trades || []) {
+    const end = tr.exitT || bars[bars.length - 1][0];
+    seg(tr.entryT, end, tr.entry, "#4c7dff");
+    seg(tr.entryT, end, tr.sl, "#f2546b");
+    seg(tr.entryT, end, tr.tp1, "#34d399");
+    if (tr.tp2 != null) seg(tr.entryT, end, tr.tp2, "#34d399", 2);
+    marks.push({ time: T(tr.entryT), position: up ? "belowBar" : "aboveBar", color: "#4c7dff", shape: up ? "arrowUp" : "arrowDown", text: "Entry " + (+tr.entry).toFixed(2) });
+    for (const f of tr.fills) marks.push({ time: T(f.t), position: up ? "aboveBar" : "belowBar", color: f.why === "stop" ? "#f2546b" : f.why === "breakeven" ? "#8b9bb8" : "#34d399", shape: "square", text: f.why === "target" ? "Target" : f.why });
+  }
+  marks.sort((x, y) => x.time - y.time);
+  candles.setMarkers(marks);
+  c.timeScale().fitContent();
+  const kind = up ? "Accumulation" : "Distribution";
+  $("title").textContent = `${S.sym} · ${kind} · ${MODELS.find(m => m.id === S.model).label} · showing ${tf}`;
+}
+
+function renderInfo() {
+  const e = S.setups.find(x => x.id === S.sel); if (!e) return;
+  const up = e.dir === "long", L = e.levels;
+  const st = e.taps.find(t => t.n === 2), t3 = e.taps.filter(t => t.n === 3);
+  let html = `<div><h3>Range</h3><dl class="kv">
+    <dt>${up ? "Selling Climax (tap 1)" : "Buying Climax (tap 1)"}</dt><dd>${fmtP(L.tap1)}<br><span class="muted" style="font-weight:500">${fmtD(e.t.tap1)}</span></dd>
+    <dt>${up ? "Bounce high" : "Drop low"}</dt><dd>${fmtP(L.bounce)}</dd>
+    <dt>Trend start</dt><dd>${fmtP(L.trendStart)}</dd>
+    <dt>50% midline</dt><dd>${fmtP(L.mid)}</dd>
+    <dt>35% limit</dt><dd>${fmtP(L.limit)}</dd></dl></div>
+  <div><h3>Taps</h3><dl class="kv">
+    <dt>ST (tap 2)</dt><dd>${st ? fmtP(st.p) + `<br><span class="muted" style="font-weight:500">${fmtD(st.t)}</span>` : "–"}</dd>
+    ${t3.map(t => `<dt>${t.name} (tap 3)${t.pending ? " forming" : ""}</dt><dd>${fmtP(t.p)}<br><span class="muted" style="font-weight:500">${fmtD(t.t)}</span></dd>`).join("") || "<dt>Tap 3</dt><dd>–</dd>"}
+    <dt>Status</dt><dd>${STATUS[e.status] || e.status}${e.why ? `<br><span class="muted" style="font-weight:500">${esc(e.why)}</span>` : ""}</dd></dl></div>`;
+  for (const tr of e.trades || []) {
+    html += `<div><h3>Trade (${tr.type})</h3><dl class="kv">
+      <dt>Entry</dt><dd>${fmtP(tr.entry)}<br><span class="muted" style="font-weight:500">${fmtD(tr.entryT)}</span></dd>
+      <dt>Stop</dt><dd>${fmtP(tr.sl)}</dd>
+      <dt>${tr.tp2 != null ? "TP1 (70%)" : "Target"}</dt><dd>${fmtP(tr.tp1)}</dd>
+      ${tr.tp2 != null ? `<dt>TP2 (30%)</dt><dd>${fmtP(tr.tp2)}</dd>` : ""}
+      <dt>Exits</dt><dd>${tr.fills.map(f => `${f.why} ${fmtP(f.p)}`).join("<br>") || "open"}</dd>
+      <dt>Result</dt><dd class="${tr.r > 0 ? "up" : tr.r < 0 ? "down" : ""}">${(tr.r > 0 ? "+" : "") + tr.r.toFixed(2)}R · ${tr.pnl >= 0 ? "+" : "−"}$${Math.abs(tr.pnl).toLocaleString("en-US", { maximumFractionDigits: 0 })}</dd></dl></div>`;
+  }
+  $("info").innerHTML = html; $("info").hidden = false;
+}
+
+function renderStats() {
+  const tr = S.setups.flatMap(e => e.trades || []);
+  if (!tr.length) { $("stats").hidden = true; return; }
+  const wins = tr.filter(t => t.r > 0).length, sumR = tr.reduce((a, t) => a + t.r, 0), pnl = tr.reduce((a, t) => a + t.pnl, 0);
+  const byType = {}; for (const t of tr) (byType[t.type] ||= []).push(t);
+  $("stats").innerHTML = `<h3>${S.sym} · ${MODELS.find(m => m.id === S.model).label} · ${S.mode === "break" ? "break entry" : "pullback entry"}</h3>
+    <div class="tw"><table><thead><tr><th>Tap 3 type</th><th>Trades</th><th>Win rate</th><th>Total R</th><th>Demo P&amp;L</th></tr></thead><tbody>
+    ${Object.entries(byType).map(([k, v]) => `<tr><td>${k}</td><td>${v.length}</td><td>${(100 * v.filter(t => t.r > 0).length / v.length).toFixed(0)}%</td><td class="${v.reduce((a, t) => a + t.r, 0) >= 0 ? "up" : "down"}">${v.reduce((a, t) => a + t.r, 0).toFixed(1)}</td><td>${Math.round(v.reduce((a, t) => a + t.pnl, 0)).toLocaleString("en-US")}</td></tr>`).join("")}
+    <tr><td><b>All</b></td><td><b>${tr.length}</b></td><td><b>${(100 * wins / tr.length).toFixed(0)}%</b></td><td class="${sumR >= 0 ? "up" : "down"}"><b>${sumR.toFixed(1)}</b></td><td><b>${Math.round(pnl).toLocaleString("en-US")}</b></td></tr></tbody></table></div>
+    <p class="note">Early, untuned numbers on 1% risk of $100k per trade. These are for checking the rules, not for judging the strategy yet.</p>`;
+  $("stats").hidden = false;
+}
+
+// ---------- controls ----------
+$("sym").addEventListener("change", e => { S.sym = e.target.value; S.sel = null; run(); });
+$("model").addEventListener("change", e => { S.model = e.target.value; S.sel = null; run(); });
+$("mode").addEventListener("change", e => { S.mode = e.target.value; S.sel = null; run(); });
+$("show").addEventListener("change", e => { S.show = e.target.value; S.sel = null; renderList(); });
+const setView = v => { S.view = v; $("vHtf").setAttribute("aria-pressed", v === "htf"); $("vLtf").setAttribute("aria-pressed", v === "ltf"); draw(); };
+$("vHtf").addEventListener("click", () => setView("htf"));
+$("vLtf").addEventListener("click", () => setView("ltf"));
+$("cases").addEventListener("click", async ev => {
+  const b = ev.target.closest(".chip"); if (!b) return;
+  const c = CASES[+b.dataset.i];
+  S.sym = c.sym; S.model = c.model; S.mode = "break"; S.show = "all";
+  $("sym").value = c.sym; $("model").value = c.model; $("mode").value = "break"; $("show").value = "all";
+  await run();
+  const t = Date.parse(c.t + "T00:00:00Z") / 1000;
+  const hit = S.setups.filter(e => e.dir === c.dir && Math.abs(e.t.tap1 - t) < 3 * 86400 && (c.bounce == null || Math.abs(e.levels.bounce - c.bounce) < 0.5))
+    .sort((x, y) => (y.trades?.length || 0) - (x.trades?.length || 0) || Math.abs(y.levels.bounce - y.levels.tap1) - Math.abs(x.levels.bounce - x.levels.tap1))[0];
+  if (hit) { select(hit.id); document.querySelector(`.item[data-id="${CSS.escape(hit.id)}"]`)?.scrollIntoView({ block: "nearest" }); }
+});
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+run();
+</script>
+</body>
+</html>

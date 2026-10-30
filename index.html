@@ -69,6 +69,8 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;backgroun
 .seg2 button{display:flex;align-items:center;gap:6px;border:0;background:transparent;border-radius:9px;min-height:36px;padding:0 11px;font-weight:600;font-size:13px;color:var(--muted)}
 .seg2 button[aria-pressed="true"],.seg2 button[aria-checked="true"]{background:var(--accent-fill);color:#fff;font-weight:700}
 .seg2 button:hover:not([aria-pressed="true"]):not([aria-checked="true"]){color:var(--ink)}
+.labLink{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)}
+.labLink:hover{border-color:var(--accent)}
 .creator{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 6px;border-radius:22px;border:1px solid var(--line);background:transparent;font-size:13px;font-weight:600}
 .creator:hover{border-color:var(--accent)}
 .creator .z{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#4C7DFF,#8B5CF6);color:#fff;font-weight:800;font-size:13px}
@@ -363,6 +365,7 @@ footer button{border:0;background:none;color:var(--accent);font-weight:700;paddi
     <button id="thDark" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg><span class="t">Dark</span></button>
     <button id="thLight" aria-pressed="false"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg><span class="t">Light</span></button>
   </div>
+  <a class="labLink" href="lab.html" title="Wyckoff Lab: strategy review (demo)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"></path></svg><span>Lab</span></a>
   <button class="creator" id="aboutBtn" aria-haspopup="dialog"><span class="z" aria-hidden="true">Z</span><span class="t">Zalin Studios</span></button>
 </header>
 

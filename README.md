@@ -45,3 +45,9 @@ Times are in UTC. GitHub sometimes starts scheduled runs a few minutes late.
 - The free Alpaca feed uses prices from the IEX exchange. Big stocks match the full market closely; very thinly traded small caps can lag slightly or show no move.
 - Index members, market caps and weights come from StockAnalysis.com (`scripts/universe.json`). Caps and weights are scaled by the live price; refresh the list when the indexes rebalance.
 - For learning and screening only. Not financial advice.
+
+## Wyckoff Lab (demo, in progress)
+`lab.html` draws the Wyckoff ranges, taps, entries, stops and targets the engine finds, so the rules can be checked by eye.
+- `engine/wyckoff.js`: the rule engine (runs in the browser and in Node). Rules: see the "Wyckoff engine rulebook" in the project notes.
+- `scripts/history.mjs` + `.github/workflows/fetch-history.yml`: download price history into the `history` branch. Edit `lab/history-request.txt` to add symbols.
+- `vendor/lightweight-charts...js`: TradingView Lightweight Charts™ (Apache-2.0, see `vendor/lightweight-charts.LICENSE`).
