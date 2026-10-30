@@ -2,9 +2,12 @@ name: Update market data
 
 on:
   schedule:
-    # Every 5 minutes, Monday–Friday, 13:00–21:59 UTC (covers 9:30 AM–4:00 PM New York time in summer and winter).
-    # GitHub can start scheduled runs a few minutes late when it is busy.
-    - cron: "*/5 13-21 * * 1-5"
+    # Backup starters through the trading day (UTC). Each run keeps updating every 5 minutes
+    # until the close, so only one of these needs to fire. Extra ones wait in line and exit
+    # quickly if the market is closed.
+    - cron: "25 13 * * 1-5"
+    - cron: "40 13 * * 1-5"
+    - cron: "*/20 14-20 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
@@ -17,7 +20,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
 
@@ -25,25 +28,9 @@ jobs:
         with:
           node-version: 20
 
-      - name: Get the last published data
-        run: git fetch --depth=1 origin data && git show origin/data:data.json > prev.json || echo "no previous data yet"
-
-      - name: Fetch prices from Alpaca
+      - name: Keep prices fresh until the close
         env:
           ALPACA_KEY_ID: ${{ secrets.ALPACA_KEY_ID }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-        run: node scripts/update.mjs out/data.json prev.json
-
-      - name: Publish to the data branch
-        run: |
-          if [ ! -f out/data.json ]; then echo "Nothing to publish."; exit 0; fi
-          if [ -f prev.json ] && cmp -s out/data.json prev.json; then echo "Data unchanged."; exit 0; fi
-          cd out
-          git init -q -b data
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data.json
-          git commit -qm "Market data $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push -fq "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" data
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/market-loop.sh
