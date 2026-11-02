@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # lets a run start its own successor near GitHub's 6-hour limit
 
 concurrency:
   group: market-data

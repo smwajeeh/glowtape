@@ -30,9 +30,21 @@ update_once() {
 }
 
 update_once                         # always publish once (captures the close if started late)
+
+# Started before the open on a weekday? Wait for it (up to ~2 hours).
+m=$(ny_minutes)
+if [ "$(ny_weekday)" -le 5 ] && [ "$m" -lt 565 ] && [ "$m" -ge 445 ]; then
+  wait_s=$(( (565 - m) * 60 )); echo "Waiting $((wait_s/60)) min for the open."; sleep "$wait_s"
+fi
+
+hand_off() {                        # start a fresh run to carry on (GitHub's 6-hour job limit)
+  curl -fsS -X POST -H "Authorization: Bearer ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/update-data.yml/dispatches" \
+    -d '{"ref":"main"}' && echo "Handed off to a new run."
+}
 while market_window; do
   elapsed=$(( ($(date +%s) - START) / 60 ))
-  if [ "$elapsed" -ge "$MAX_MIN" ]; then echo "Reached ${MAX_MIN} min; the next scheduled run continues."; break; fi
+  if [ "$elapsed" -ge "$MAX_MIN" ]; then echo "Reached ${MAX_MIN} min."; hand_off; break; fi
   now=$(date +%s); sleep $(( STEP - now % STEP + 5 ))   # wake just after each 5-minute mark
   update_once
 done
